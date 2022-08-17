@@ -27,6 +27,9 @@
         "jest",
         "import"
     ],
+    "ignorePatterns": [
+        "*.validator.ts"
+    ],
     "rules": {
         "import/no-unresolved": "error",
         "import/prefer-default-export": "off",

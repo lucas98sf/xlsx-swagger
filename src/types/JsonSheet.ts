@@ -1,12 +1,15 @@
 // import { OpenAPIV3 } from 'openapi-types';
 
+type Verb = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH';
+type Type = 'boolean' | 'object' | 'number' | 'string' | 'integer' | 'array';
+
 export interface JsonSheet {
   info: Info;
   servers: Server[];
   tags: Tag[];
   parameters: Parameter[];
   schemas: Schema[];
-  responses: [];
+  // responses: []; //? usar isso ao invés do path-responses?
   path: Path[];
   'path-tags': PathTags[];
   'path-requestBody': PathRequestBody[];
@@ -14,8 +17,24 @@ export interface JsonSheet {
   'path-responses': PathResponse[];
 }
 
-type Verb = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH';
-type Type = 'boolean' | 'object' | 'number' | 'string' | 'integer' | 'array';
+export type PathData = PathTags | PathRequestBody | PathParameter | PathResponse;
+
+export interface Path {
+  api: string;
+  verb: Verb;
+  summary: string;
+  description: string;
+}
+
+export interface PathResponse {
+  api: string;
+  verb: Verb;
+  ref: string; // FIXME usar apenas ref?
+  property?: string;
+  type?: Type;
+  description?: string;
+  status?: number; // TODO adicionar no excel
+}
 
 interface Info {
   title: string;
@@ -50,51 +69,20 @@ interface Schema {
   description: string;
 }
 
-interface Path {
-  api: string;
-  verb: Verb;
-  summary: string;
-  description: string;
-}
-
 interface PathTags {
   api: string;
   verb: Verb;
-  tags: string;
+  tags: string; // FIXME deveria ser 'tag'?
 }
 
 interface PathRequestBody {
   api: string;
   verb: Verb;
-  ref?: string;
+  ref: string;
 }
 
 interface PathParameter {
   api: string;
   verb: Verb;
-  ref?: string;
-}
-
-interface PathResponse {
-  api: string;
-  verb: Verb;
-  ref?: string;
-  property: string;
-  type: Type;
-  description: string;
-  property_1?: string;
-  type_1?: string;
-  description_1?: string;
-  property_2?: string;
-  type_2?: string;
-  description_2?: string;
-  property_3?: string;
-  type_3?: string;
-  description_3?: string;
-  property_4?: string;
-  type_4?: string;
-  description_4?: string;
-  property_5?: string;
-  type_5?: string;
-  description_5?: string;
+  ref: string;
 }

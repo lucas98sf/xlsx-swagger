@@ -4,3 +4,5 @@ coverage
 .eslintcache
 dist
 *.xlsx
+*.validator.ts
+output.*
