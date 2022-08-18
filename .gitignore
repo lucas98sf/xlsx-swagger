@@ -5,4 +5,4 @@ coverage
 dist
 *.xlsx
 *.validator.ts
-output.*
+logs
