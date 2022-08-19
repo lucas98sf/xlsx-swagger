@@ -1,3 +1,4 @@
+import SwaggerParser from '@apidevtools/swagger-parser';
 import { jsonToOpenApiDocument, sheetsToJson, writeJson } from './mappers';
 import { validateOpenApiDocument } from './validateOpenApiDocument';
 
@@ -10,3 +11,11 @@ const openApiDocument = jsonToOpenApiDocument(json);
 if (DEBUG) writeJson(openApiDocument, 'document.json');
 
 validateOpenApiDocument(openApiDocument);
+
+SwaggerParser.parse(openApiDocument)
+  .then(document => {
+    if (DEBUG) writeJson(document, 'validated-document.json');
+  })
+  .catch(error => {
+    console.error(error);
+  });

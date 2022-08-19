@@ -1,14 +1,13 @@
-import { Path, PathData } from './Path';
-import { Schema, SchemaData } from './Schema';
+import { Schema } from './Schema';
+import { Parameter, Path, PathData } from './Path';
 
 export interface JsonSheet extends PathData {
   info: Info;
   servers: Server[];
   tags: Tag[];
-  parameters: Parameter[];
   schemas: Schema[];
+  parameters: Parameter[];
   path: Path[];
-  // responses: []; //? usar isso ao invés do path-responses?
 }
 
 interface Info {
@@ -25,12 +24,4 @@ interface Server {
 interface Tag {
   name: string;
   description: string;
-}
-
-interface Parameter extends SchemaData {
-  parameter: string;
-  name: string;
-  in: string;
-  description: string;
-  required: boolean;
 }

@@ -1,13 +1,12 @@
 import { Type } from './helpers';
 
 export interface Schema {
-  property: string;
+  name: string;
+  description?: string;
+  property: string; // vai virar array de schemas (properties)
   type: Type;
-  description: string;
-}
-
-export interface SchemaData {
-  'schema-type': string;
-  'schema-pattern': string;
-  'schema-maxLenght': number;
+  item?: string; // para arrays e enums
+  pattern?: string;
+  maxLength?: number;
+  minLength?: number;
 }

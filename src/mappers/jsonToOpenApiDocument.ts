@@ -9,7 +9,6 @@ export const jsonToOpenApiDocument = (json: JsonSheet): OpenAPIV3.Document => ({
     // FIXME talvez padronizar para usar sempre components
     // TODO maperar components
     // schemas: json.schemas,
-    // parameters: json.parameters,
   },
   servers: json.servers,
   tags: json.tags,
@@ -18,5 +17,6 @@ export const jsonToOpenApiDocument = (json: JsonSheet): OpenAPIV3.Document => ({
     'path-parameters': json['path-parameters'],
     'path-requestBody': json['path-requestBody'],
     'path-responses': json['path-responses'],
+    parameters: json.parameters,
   }),
 });
