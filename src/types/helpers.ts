@@ -1,2 +1,4 @@
+import { OpenAPIV3 } from 'openapi-types';
+
 export type HttpVerb = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH';
-export type Type = 'boolean' | 'object' | 'number' | 'string' | 'integer' | 'array' | 'enum';
+export type Type = OpenAPIV3.NonArraySchemaObjectType | 'array';

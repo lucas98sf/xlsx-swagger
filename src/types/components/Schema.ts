@@ -1,4 +1,4 @@
-import { Type } from './helpers';
+import { Type } from '../helpers';
 
 export interface Schema {
   name: string;

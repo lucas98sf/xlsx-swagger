@@ -1,5 +1,6 @@
-import { Schema } from './Schema';
-import { Parameter, Path, PathData } from './Path';
+import { Schema } from './components/Schema';
+import { Path, PathData } from './Path';
+import { Parameter } from './components/Parameter';
 
 export interface JsonSheet extends PathData {
   info: Info;

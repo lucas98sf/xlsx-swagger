@@ -15,7 +15,6 @@
         "plugin:jest/recommended",
         "plugin:prettier/recommended"
     ],
-    "overrides": [],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": "latest",
@@ -34,7 +33,8 @@
         "import/no-unresolved": "error",
         "import/prefer-default-export": "off",
         "import/no-default-export": "error",
-        "no-console": "off"
+        "no-console": "off",
+        "@typescript-eslint/no-non-null-assertion": "off"
     },
     "settings": {
         "import/parsers": {

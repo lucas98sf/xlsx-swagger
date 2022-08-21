@@ -7,20 +7,11 @@ export interface Path {
   description: string;
 }
 
-export interface Parameter {
-  parameter: string;
-  name: string;
-  in: string;
-  description: string;
-  required: boolean;
-}
-
 export interface PathData {
   'path-tags': PathTags[];
   'path-requestBody': PathRequestBody[];
   'path-parameters': PathParameter[];
   'path-responses': PathResponse[];
-  parameters: Parameter[];
 }
 
 export type PathInfo = PathTags | PathRequestBody | PathParameter | PathResponse;
