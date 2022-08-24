@@ -1,19 +1,25 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { Path, PathData, PathInfo, PathResponse } from '../types/Path';
+import {
+  Path,
+  PathData,
+  PathInfo,
+  PathParameter,
+  PathRequestBody,
+  PathResponse,
+} from '../types/Path';
 
 export const mapJsonPaths = (paths: Path[], pathData: PathData): OpenAPIV3.PathsObject => {
   return paths.reduce<OpenAPIV3.PathsObject>((acc, path) => {
     const isFromPath = (data: PathInfo) => data.api === path.api && data.verb === path.verb;
 
-    const getRef = (dataWithPathInfo: Partial<PathInfo & { ref: string }>) => {
-      const { ref } = dataWithPathInfo;
-      return { $ref: ref };
+    const getRef = (dataWithPathInfo: PathRequestBody | PathParameter) => {
+      const { $ref } = dataWithPathInfo;
+      return { $ref };
     };
 
     const getPathResponses = (obj: OpenAPIV3.ResponsesObject, res: PathResponse) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { status, ref, api, verb, ...data } = res; // FIXME implementado apenas pra $ref
-      const result = { $ref: ref }; // ref ? { $ref: ref } : data;
+      const { status, $ref } = res;
+      const result = { $ref };
       return { ...obj, [status || '200']: result };
     };
 

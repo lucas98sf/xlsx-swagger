@@ -1,4 +1,4 @@
-import { HttpVerb } from './helpers';
+import { HttpVerb, ParameterRef, ResponseRef, SchemaRef } from './helpers';
 
 export interface Path {
   api: string;
@@ -19,7 +19,7 @@ export type PathInfo = PathTags | PathRequestBody | PathParameter | PathResponse
 export interface PathResponse {
   api: string;
   verb: HttpVerb;
-  ref: string; // FIXME usar apenas ref?
+  $ref: ResponseRef;
   status?: number; // TODO adicionar no excel
 }
 
@@ -29,14 +29,14 @@ interface PathTags {
   tag: string; // FIXME deveria ser 'tag'?
 }
 
-interface PathRequestBody {
+export interface PathRequestBody {
   api: string;
   verb: HttpVerb;
-  ref: string;
+  $ref: SchemaRef;
 }
 
-interface PathParameter {
+export interface PathParameter {
   api: string;
   verb: HttpVerb;
-  ref: string;
+  $ref: ParameterRef;
 }
