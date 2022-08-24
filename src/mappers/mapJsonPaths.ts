@@ -12,14 +12,19 @@ export const mapJsonPaths = (paths: Path[], pathData: PathData): OpenAPIV3.Paths
   return paths.reduce<OpenAPIV3.PathsObject>((acc, path) => {
     const isFromPath = (data: PathInfo) => data.api === path.api && data.verb === path.verb;
 
-    const getRef = (dataWithPathInfo: PathRequestBody | PathParameter) => {
+    const getPathParameters = (dataWithPathInfo: PathRequestBody | PathParameter) => {
       const { $ref } = dataWithPathInfo;
-      return { $ref };
+      return { $ref: `#/components/parameters/${$ref}` };
+    };
+
+    const getPathResquestBodies = (dataWithPathInfo: PathRequestBody | PathParameter) => {
+      const { $ref } = dataWithPathInfo;
+      return { $ref: `#/components/schemas/${$ref}` };
     };
 
     const getPathResponses = (obj: OpenAPIV3.ResponsesObject, res: PathResponse) => {
       const { status, $ref } = res;
-      const result = { $ref };
+      const result = { $ref: `#/components/responses/${$ref}` };
       return { ...obj, [status || '200']: result };
     };
 
@@ -28,8 +33,11 @@ export const mapJsonPaths = (paths: Path[], pathData: PathData): OpenAPIV3.Paths
 
     const operationObject = {
       tags: pathData['path-tags'].flatMap(tag => (isFromPath(tag) ? [tag.tag] : [])),
-      parameters: pathData['path-parameters'].filter(isFromPath).map(getRef),
-      requestBody: pathData['path-requestBody'].filter(isFromPath).map(getRef).shift(),
+      parameters: pathData['path-parameters'].filter(isFromPath).map(getPathParameters),
+      requestBody: pathData['path-requestBody']
+        .filter(isFromPath)
+        .map(getPathResquestBodies)
+        .shift(),
       responses: pathData['path-responses'].filter(isFromPath).reduce(getPathResponses, {}),
     } as OpenAPIV3.OperationObject;
 

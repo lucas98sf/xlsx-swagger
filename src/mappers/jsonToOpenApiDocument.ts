@@ -1,5 +1,7 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { mapJsonParameter } from './mapJsonParameters';
+import { mapJsonParameters } from './mapJsonParameters';
+import { mapJsonSchemas } from './mapJsonSchemas';
+import { mapJsonResponses } from './mapJsonResponses';
 import { JsonSheet } from '../types/JsonSheet';
 import { mapJsonPaths } from './mapJsonPaths';
 
@@ -7,10 +9,9 @@ export const jsonToOpenApiDocument = (json: JsonSheet): OpenAPIV3.Document => ({
   openapi: '3.0.0',
   info: json.info,
   components: {
-    // FIXME talvez padronizar para usar sempre components
-    // TODO maperar components
-    // schemas: json.schemas,
-    parameters: mapJsonParameter(json.parameters),
+    schemas: mapJsonSchemas(json.schemas),
+    parameters: mapJsonParameters(json.parameters),
+    responses: mapJsonResponses(json.responses),
   },
   servers: json.servers,
   tags: json.tags,

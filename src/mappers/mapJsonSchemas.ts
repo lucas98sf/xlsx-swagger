@@ -2,19 +2,31 @@ import _ from 'lodash';
 import { OpenAPIV3 } from 'openapi-types';
 import { Schema } from '../types/components/Schema';
 
-export const mapJsonParameter = (schemas: Schema[]) => {
-  return schemas.reduce<{
-    [key: string]: OpenAPIV3.SchemaObject;
-  }>((acc, schema) => {
-    if (acc[schema.name].properties && schema.property) {
-      acc[schema.name].properties![_.camelCase(schema.property)] = {
-        $ref: `#/components/schemas/${schema.property}`,
+export const mapJsonSchemas = (schemas: Schema[]) => {
+  return schemas.reduce<OpenAPIV3.ComponentsObject['schemas']>((acc, schema) => {
+    const { name, property, items, ...schemaData } = schema;
+    if (property) {
+      const propertyName = _.camelCase(property);
+      const propertyRef = {
+        $ref: `#/components/schemas/${property}`,
       };
+      if (acc![name]) {
+        (acc![name] as OpenAPIV3.NonArraySchemaObject).properties![propertyName] = propertyRef;
+      } else {
+        Object.assign(schemaData, {
+          properties: {
+            [propertyName]: propertyRef,
+          },
+        });
+        acc![name] = schemaData as OpenAPIV3.NonArraySchemaObject;
+      }
+    } else if (items) {
+      Object.assign(schemaData, {
+        items: { $ref: `#/components/schemas/${items}` },
+      });
+      acc![name] = schemaData as OpenAPIV3.ArraySchemaObject;
     } else {
-      acc[schema.name] = {
-        type: 'object',
-        properties: { [schema.property]: { $ref: schema.property } },
-      };
+      acc![name] = schemaData as OpenAPIV3.NonArraySchemaObject;
     }
     return acc;
   }, {});

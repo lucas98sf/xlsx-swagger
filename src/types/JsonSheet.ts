@@ -1,3 +1,4 @@
+import { Response } from './components/Response';
 import { Schema } from './components/Schema';
 import { Path, PathData } from './Path';
 import { Parameter } from './components/Parameter';
@@ -9,6 +10,7 @@ export interface JsonSheet extends PathData {
   schemas: Schema[];
   parameters: Parameter[];
   path: Path[];
+  responses: Response[];
 }
 
 interface Info {

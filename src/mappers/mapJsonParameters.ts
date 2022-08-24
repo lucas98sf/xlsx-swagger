@@ -1,19 +1,23 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { Parameter } from '../types/components/Parameter';
 
-export const mapJsonParameter = (parameters: Parameter[]) => {
+export const mapJsonParameters = (parameters: Parameter[]) => {
   return parameters.reduce<OpenAPIV3.ComponentsObject['parameters']>((acc, param) => {
-    const { parameter, ...parameterData } = param;
-    const result: OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject = { ...parameterData };
-    result.schema = parameterData.$ref
-      ? { $ref: parameterData.$ref }
+    const result: OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject = {
+      in: param.in,
+      name: param.name,
+      description: param.description,
+      required: param.required,
+    };
+    result.schema = param.$ref
+      ? { $ref: `#/components/schemas/${param.$ref}` }
       : {
-          type: parameterData.schemaType,
-          format: parameterData.schemaFormat,
-          example: parameterData.schemaExample,
-          pattern: parameterData.schemaPattern,
+          type: param.schemaType,
+          format: param.schemaFormat,
+          example: param.schemaExample,
+          pattern: param.schemaPattern,
         };
-    acc![parameter] = result;
+    acc![param.parameter] = result;
     return acc;
   }, {});
 };

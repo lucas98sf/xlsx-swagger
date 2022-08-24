@@ -1,9 +1,8 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { SchemaRef } from '../helpers';
 
 export interface Response {
   name: string;
-  description?: string;
-  content?: string;
-  header?: OpenAPIV3.HeaderObject;
-  $ref?: string;
+  description: string;
+  content?: SchemaRef;
+  header?: SchemaRef;
 }

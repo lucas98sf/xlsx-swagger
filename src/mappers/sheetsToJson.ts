@@ -16,7 +16,7 @@ export const sheetsToJson = (filename: string): JsonSheet => {
         return json;
       }, {})
     );
-    // console.log(JSON.stringify(sheetsAsJson, null, 2));
+    console.log(JSON.stringify(sheetsAsJson, null, 2));
     return sheetsAsJson;
   } catch (error: unknown) {
     console.error('Erro no excel:', (error as Error).message.split('\n')[0]);

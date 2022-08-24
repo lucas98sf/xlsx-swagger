@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { ParameterRef } from '../helpers';
+import { SchemaRef } from '../helpers';
 
 export type Parameter = {
   parameter: string;
@@ -7,7 +7,7 @@ export type Parameter = {
   in: string;
   description: string;
   required: boolean;
-  $ref?: ParameterRef;
+  $ref?: SchemaRef;
   schemaType?: OpenAPIV3.NonArraySchemaObjectType;
   schemaFormat?: string;
   schemaExample?: string;
