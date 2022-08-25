@@ -3,11 +3,15 @@ import { SchemaRef } from '../helpers';
 
 export interface Schema {
   name: string;
-  type: OpenAPIV3.NonArraySchemaObjectType | 'array';
+  type: 'object';
   description?: string;
-  property?: SchemaRef; // vai virar array de schemas (properties)
-  items?: SchemaRef; // para arrays e enums
-  pattern?: string;
-  maxLength?: number;
-  minLength?: number;
+  property?: 'string';
+  property$ref?: SchemaRef;
+  propertyType?: OpenAPIV3.NonArraySchemaObjectType;
+  propertyDefault?: any;
+  propertyPattern?: string;
+  propertyExample?: string;
+  propertyMinLength?: number;
+  propertyMaxLength?: number;
+  propertyFormat?: string;
 }

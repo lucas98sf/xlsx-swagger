@@ -7,9 +7,11 @@ export type Parameter = {
   in: string;
   description: string;
   required: boolean;
-  $ref?: SchemaRef;
+  schema$ref?: SchemaRef;
   schemaType?: OpenAPIV3.NonArraySchemaObjectType;
+  schemaDefault?: any;
+  schemaPattern?: string;
+  schemaMaxLength?: number;
   schemaFormat?: string;
   schemaExample?: string;
-  schemaPattern?: string;
 };

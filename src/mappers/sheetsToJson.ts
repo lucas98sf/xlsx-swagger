@@ -16,7 +16,7 @@ export const sheetsToJson = (filename: string): JsonSheet => {
         return json;
       }, {})
     );
-    console.log(JSON.stringify(sheetsAsJson, null, 2));
+    // console.log(JSON.stringify(sheetsAsJson, null, 2));
     return sheetsAsJson;
   } catch (error: unknown) {
     console.error('Erro no excel:', (error as Error).message.split('\n')[0]);
@@ -27,5 +27,7 @@ export const sheetsToJson = (filename: string): JsonSheet => {
 export const writeJson = (json: object, outputFile: string) => {
   const logsFolder = `${process.cwd()}/logs/`;
   if (!fs.existsSync(logsFolder)) fs.mkdirSync(logsFolder);
-  fs.writeFileSync(logsFolder + outputFile, JSON.stringify(json, null, 2));
+  const prettyJson = JSON.stringify(json, null, 2);
+  console.log(prettyJson);
+  fs.writeFileSync(logsFolder + outputFile, prettyJson);
 };
