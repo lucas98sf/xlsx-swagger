@@ -2,16 +2,18 @@ import { OpenAPIV3 } from 'openapi-types';
 import { SchemaRef } from '../helpers';
 
 export interface Schema {
-  name: string;
+  schema: string;
   type: 'object';
   description?: string;
   property?: 'string';
   property$ref?: SchemaRef;
+  propertyRequired?: boolean;
   propertyType?: OpenAPIV3.NonArraySchemaObjectType;
-  propertyDefault?: any;
+  propertyDescription?: string;
+  propertyFormat?: string;
   propertyPattern?: string;
   propertyExample?: string;
-  propertyMinLength?: number;
+  propertyDefault?: any;
   propertyMaxLength?: number;
-  propertyFormat?: string;
+  propertyMinLength?: number;
 }

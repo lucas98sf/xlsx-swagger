@@ -9,9 +9,9 @@ export type Parameter = {
   required: boolean;
   schema$ref?: SchemaRef;
   schemaType?: OpenAPIV3.NonArraySchemaObjectType;
-  schemaDefault?: any;
   schemaPattern?: string;
   schemaMaxLength?: number;
-  schemaFormat?: string;
   schemaExample?: string;
+  schemaDefault?: any;
+  schemaFormat?: string;
 };

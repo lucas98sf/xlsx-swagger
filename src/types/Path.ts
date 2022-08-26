@@ -5,6 +5,7 @@ export interface Path {
   verb: HttpVerb;
   summary: string;
   description: string;
+  operationId: string;
 }
 
 export interface PathData {
@@ -20,13 +21,13 @@ export interface PathResponse {
   api: string;
   verb: HttpVerb;
   $ref: ResponseRef;
-  status?: number; // TODO adicionar no excel
+  status?: number;
 }
 
 interface PathTags {
   api: string;
   verb: HttpVerb;
-  tag: string; // FIXME deveria ser 'tag'?
+  tag: string;
 }
 
 export interface PathRequestBody {

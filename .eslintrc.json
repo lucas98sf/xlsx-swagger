@@ -34,7 +34,8 @@
         "import/prefer-default-export": "off",
         "import/no-default-export": "error",
         "no-console": "off",
-        "@typescript-eslint/no-non-null-assertion": "off"
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-explicit-any": "off"
     },
     "settings": {
         "import/parsers": {
