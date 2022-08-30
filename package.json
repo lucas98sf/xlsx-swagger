@@ -4,11 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebuild": "typescript-json-validator src/types/JsonSheet.ts --useNamedExport --coerceTypes --defaultProps false --ignoreErrors --refs false",
     "build": "npx rimraf ./dist && tsc",
     "test": "jest",
     "start": "npm run build && ts-node dist/index.ts",
-    "predev": "npm run prebuild",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "prepare": "husky install"
   },
