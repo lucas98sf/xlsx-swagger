@@ -1,6 +1,13 @@
 [X] - components
-[ ] - yaml
-[ ] - respostas de erro padrão
+
+[X] - yaml
+
 [X] - estruturação do excel
+
 [X] - logicas para array
-[ ] - logicas para enum
+
+[X] - logicas para enum
+
+[ ] - respostas de erro padrão
+
+[ ] - testes
