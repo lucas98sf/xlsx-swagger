@@ -1,6 +1,6 @@
 // import { OpenAPIV3 } from 'openapi-types';
 
-// import _ from 'lodash';
+import _ from 'lodash';
 import { JsonComponents, JsonObject, JsonSheet } from '../types';
 import {
   sanitizeRowData,
@@ -22,7 +22,7 @@ export const mapJsonComponents = (
             'application/json': {
               schema: {
                 type: 'object',
-                // required: [],
+                required: [],
                 properties: {},
               },
             },
@@ -36,7 +36,7 @@ export const mapJsonComponents = (
             'application/json': {
               schema: {
                 type: 'object',
-                // required: [],
+                required: [],
                 properties: {},
               },
             },
@@ -74,22 +74,21 @@ export const mapJsonComponents = (
       if (!componentInfo || !key || ['{', '['].includes(key) || !rowData.type)
         return;
 
-      const newData = sanitizeRowData(
+      const sanitizedData = sanitizeRowData(
         { ...rowData, type: rowData.type },
         key,
         sheet.command
       );
-      const { type, required } = newData;
+      const { required, ...newData } = sanitizedData;
+      if (newData.in) Object.assign(newData, { required });
 
       if (componentInfo === 'entrada') {
         Object.assign(components.parameters, {
           [upperCaseFirstLetter(key)]: newData,
         });
       } else if (componentInfo === 'payload_body') {
-        if (!mountingRequestBody) {
-          if (type === 'object') {
-            mountingRequestBody = true;
-          }
+        if (!mountingRequestBody && newData.type === 'object') {
+          mountingRequestBody = true;
           return;
         }
 
@@ -98,52 +97,41 @@ export const mapJsonComponents = (
             'application/json'
           ];
 
-        /// //////////////////////////
-        if (type === 'array' || type === 'object') {
-          if (objectsStack?.length) {
-            const lastObject = objectsStack[objectsStack.length - 1];
-
-            const objectItems =
-              lastObject.type === 'object' ? 'properties' : 'items';
-
-            lastObject[objectItems] = {
-              ...lastObject[objectItems],
-              [key]: newData,
-            };
-
-            objectsStack.push(newData as JsonObject);
-          } else {
-            schema.properties = {
-              ...schema.properties,
-              [key]: newData,
-            };
-
-            objectsStack = [newData as JsonObject];
-          }
-        } else if (objectsStack?.length) {
+        if (objectsStack?.length) {
           const lastObject = objectsStack[objectsStack.length - 1];
 
-          const objectItems =
-            lastObject.type === 'object' ? 'properties' : 'items';
+          if (required)
+            lastObject.required = lastObject.required?.length
+              ? [...lastObject.required, key]
+              : [key];
 
+          const isArray = lastObject.type === 'array';
+          const objectItems = isArray ? 'items' : 'properties';
           lastObject[objectItems] = {
             ...lastObject[objectItems],
-            [key]: newData,
+            ...(isArray
+              ? { type: 'object', properties: { [key]: newData } }
+              : { [key]: newData }),
           };
         } else {
+          if (required)
+            schema.required = schema.required?.length
+              ? [...schema.required, key]
+              : [key];
+
           schema.properties = {
             ...schema.properties,
             [key]: newData,
           };
         }
-        /// //////////////////////////
+
+        if (['array', 'object'].includes(newData.type!))
+          objectsStack = [...objectsStack, newData as JsonObject];
       } else if (componentInfo === 'saida') {
-        if (!mountingResponse) {
-          if (type === 'object') {
-            mountingResponse = true;
-            mountingRequestBody = false;
-            objectsStack = [];
-          }
+        if (!mountingResponse && newData.type === 'object') {
+          mountingResponse = true;
+          mountingRequestBody = false;
+          objectsStack = [];
           return;
         }
 
@@ -152,47 +140,47 @@ export const mapJsonComponents = (
             'application/json'
           ];
 
-        /// //////////////////////////
-        if (type === 'array' || type === 'object') {
-          if (objectsStack?.length) {
-            const lastObject = objectsStack[objectsStack.length - 1];
-
-            const objectItems =
-              lastObject.type === 'object' ? 'properties' : 'items';
-
-            lastObject[objectItems] = {
-              ...lastObject[objectItems],
-              [key]: newData,
-            };
-
-            objectsStack.push(newData as JsonObject);
-          } else {
-            schema.properties = {
-              ...schema.properties,
-              [key]: newData,
-            };
-
-            objectsStack = [newData as JsonObject];
-          }
-        } else if (objectsStack?.length) {
+        if (objectsStack?.length) {
           const lastObject = objectsStack[objectsStack.length - 1];
 
-          const objectItems =
-            lastObject.type === 'object' ? 'properties' : 'items';
+          if (required)
+            lastObject.required = lastObject.required?.length
+              ? [...lastObject.required, key]
+              : [key];
 
+          const isArray = lastObject.type === 'array';
+          const objectItems = isArray ? 'items' : 'properties';
           lastObject[objectItems] = {
             ...lastObject[objectItems],
-            [key]: newData,
+            ...(isArray
+              ? { type: 'object', properties: { [key]: newData } }
+              : { [key]: newData }),
           };
         } else {
+          if (required)
+            schema.required = schema.required?.length
+              ? [...schema.required, key]
+              : [key];
+
           schema.properties = {
             ...schema.properties,
             [key]: newData,
           };
         }
-        /// //////////////////////////
+
+        if (['array', 'object'].includes(newData.type!))
+          objectsStack = [...objectsStack, newData as JsonObject];
       }
     });
+
+    Object.keys(components.requestBodies).forEach(req => {
+      const { schema } =
+        components.requestBodies[req].content['application/json'];
+
+      if (_.isEmpty(schema.properties)) delete components.requestBodies[req];
+      if (!schema.required?.length) delete schema.required;
+    });
+
     return { ...sheet, components };
   });
 };

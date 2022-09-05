@@ -25,7 +25,7 @@ export const mapJsonPaths = (
             parameters: Object.keys(sheet.components.parameters).map(key => ({
               $ref: `#/components/parameters/${key}`,
             })),
-            ...(method.toLowerCase() !== 'get'
+            ...(sheet.components.requestBodies[`${name}RequestBody`]
               ? {
                   requestBody: {
                     $ref: `#/components/requestBodies/${name}RequestBody`,

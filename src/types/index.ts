@@ -24,7 +24,7 @@ export type JsonObject = {
   type: 'object' | 'array';
   items?: object;
   properties?: object;
-  // required: string[];
+  required?: string[];
 };
 
 export type JsonComponents = {

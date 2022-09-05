@@ -134,7 +134,7 @@ export const getParamType = (param: string, sheetName: string) => {
 };
 
 type SanitizedRowData = {
-  required: boolean;
+  required?: boolean;
   in?: string;
   name?: string;
   schema?: Partial<TypeAndFormat>;
