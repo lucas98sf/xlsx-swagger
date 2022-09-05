@@ -1,5 +1,3 @@
-// import { OpenAPIV3 } from 'openapi-types';
-
 import _ from 'lodash';
 import { JsonComponents, JsonObject, JsonSheet } from '../types';
 import {

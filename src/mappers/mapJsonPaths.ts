@@ -1,6 +1,11 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { JsonComponents, JsonSheet } from '../types';
 import { upperCaseFirstLetter } from '../utils';
+import {
+  defaultResponseErrorSchema,
+  defaultResponses,
+  defaultResponsesRefs,
+} from './defaultResponses';
 
 export const mapJsonPaths = (
   sheets: Array<JsonSheet & { components: JsonComponents }>
@@ -15,6 +20,10 @@ export const mapJsonPaths = (
       const { name, version, api, method, description } = sheet;
       const path = api.replace(`${version}/`, '/')!;
       const operationId = `${upperCaseFirstLetter(name)}`;
+      const hasAuth = Object.keys(sheet.components.parameters).some(
+        param => param.toLowerCase() === 'authorization'
+      );
+
       return {
         ...paths,
         [path]: {
@@ -22,9 +31,11 @@ export const mapJsonPaths = (
           [method.toLowerCase()]: {
             operationId,
             description,
-            parameters: Object.keys(sheet.components.parameters).map(key => ({
-              $ref: `#/components/parameters/${key}`,
-            })),
+            parameters: Object.keys(sheet.components.parameters)
+              .filter(key => key.toLowerCase() !== 'authorization')
+              .map(key => ({
+                $ref: `#/components/parameters/${key}`,
+              })),
             ...(sheet.components.requestBodies[`${name}RequestBody`]
               ? {
                   requestBody: {
@@ -36,7 +47,17 @@ export const mapJsonPaths = (
               [sheet.status]: {
                 $ref: `#/components/responses/${sheet.status}Response${name}`,
               },
+              ...defaultResponsesRefs,
             },
+            ...(hasAuth
+              ? {
+                  security: [
+                    {
+                      authorization: [],
+                    },
+                  ],
+                }
+              : {}),
           },
         },
       };
@@ -60,6 +81,15 @@ export const mapJsonPaths = (
         responses: {
           ...acc.responses,
           ...(components.responses as Record<string, OpenAPIV3.ResponseObject>),
+          ...defaultResponses,
+        },
+        schemas: defaultResponseErrorSchema,
+        securitySchemes: {
+          authorization: {
+            type: 'apiKey',
+            name: 'authorization',
+            in: 'header',
+          },
         },
       };
     }, {} as OpenAPIV3.ComponentsObject),

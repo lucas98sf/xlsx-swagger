@@ -8,6 +8,10 @@
 
 [X] - logicas para enum
 
-[ ] - respostas de erro padrão
+[X] - respostas de erro padrão
+
+[X] - mover authorization para security
+
+[ ] - separar schemas
 
 [ ] - testes

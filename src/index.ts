@@ -20,3 +20,4 @@ validateOpenApiDocument(openApiDocument);
 
 const yaml = new YAML.Document(openApiDocument);
 fs.writeFileSync('generated/openapi.yaml', yaml.toString());
+console.log('OpenAPI document generated successfully!');
