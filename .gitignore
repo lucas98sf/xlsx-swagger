@@ -6,3 +6,4 @@ dist
 *.xlsx
 *.validator.ts
 logs
+generated

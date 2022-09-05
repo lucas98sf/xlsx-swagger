@@ -47,6 +47,7 @@
     "@apidevtools/swagger-parser": "^10.1.0",
     "lodash": "^4.17.21",
     "openapi-types": "^12.0.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "yaml": "^2.1.1"
   }
 }
