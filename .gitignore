@@ -3,6 +3,7 @@ node_modules
 coverage
 .eslintcache
 dist
-# *.xlsx
+*.xlsx
 *.validator.ts
 logs
+generated

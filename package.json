@@ -4,11 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebuild": "typescript-json-validator src/types/JsonSheet.ts --useNamedExport --coerceTypes --defaultProps false --ignoreErrors --refs false",
     "build": "npx rimraf ./dist && tsc",
     "test": "jest",
     "start": "npm run build && ts-node dist/index.ts",
-    "predev": "npm run prebuild",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "prepare": "husky install"
   },
@@ -49,6 +47,7 @@
     "@apidevtools/swagger-parser": "^10.1.0",
     "lodash": "^4.17.21",
     "openapi-types": "^12.0.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "yaml": "^2.1.1"
   }
 }

@@ -30,12 +30,14 @@
         "*.validator.ts"
     ],
     "rules": {
+        "prettier/prettier": "off",
         "import/no-unresolved": "error",
         "import/prefer-default-export": "off",
         "import/no-default-export": "error",
         "no-console": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
     },
     "settings": {
         "import/parsers": {
