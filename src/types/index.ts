@@ -8,8 +8,20 @@ export type JsonSheetPathData = {
   enumItems?: string;
 };
 
+export type JsonSheetInfo = {
+  title: string;
+  version: string;
+  description: string;
+  servers: string[];
+  tags: {
+    name: string;
+    description: string;
+  }[];
+};
+
 export type JsonSheet = {
   name: string;
+  tag: string;
   command: string;
   version: string;
   api: string;
@@ -27,19 +39,26 @@ export type JsonObject = {
   required?: string[];
 };
 
+export type Ref = {
+  $ref: string;
+};
+
 export type JsonComponents = {
+  schemas: {
+    [key: string]: Partial<JsonObject>;
+  };
   parameters: {
     [name: string]: {
       name: string;
       in: 'query' | 'path' | 'header';
-      schema: JsonObject;
+      schema: Ref;
     };
   };
   requestBodies: {
     [name: string]: {
       content: {
         'application/json': {
-          schema: JsonObject;
+          schema: Ref;
         };
       };
     };
@@ -49,7 +68,7 @@ export type JsonComponents = {
       description: string;
       content: {
         'application/json': {
-          schema: JsonObject;
+          schema: Ref;
         };
       };
     };

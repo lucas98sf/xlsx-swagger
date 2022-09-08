@@ -19,11 +19,14 @@ const removeEmptyObjects = (
   components: JsonComponents & ComponentsInfo
 ): JsonComponents => {
   const { info, ...componentsData } = components;
-  Object.keys(componentsData.requestBodies).forEach(req => {
-    const { schema } =
-      componentsData.requestBodies[req].content['application/json'];
+  Object.keys(componentsData.schemas).forEach(key => {
+    const schema = componentsData.schemas[key];
 
-    if (_.isEmpty(schema.properties)) delete componentsData.requestBodies[req];
+    if (_.isEmpty(schema.properties)) {
+      delete componentsData.schemas[key];
+      delete componentsData.requestBodies[key];
+      delete componentsData.responses[key];
+    }
     if (!schema.required?.length) delete schema.required;
   });
   return componentsData;
@@ -41,11 +44,7 @@ export const mapJsonComponents = (
         [`${name}RequestBody`]: {
           content: {
             'application/json': {
-              schema: {
-                type: 'object',
-                required: [],
-                properties: {},
-              },
+              schema: { $ref: `#/components/schemas/${name}RequestBody` },
             },
           },
         },
@@ -55,14 +54,14 @@ export const mapJsonComponents = (
           description: response,
           content: {
             'application/json': {
-              schema: {
-                type: 'object',
-                required: [],
-                properties: {},
-              },
+              schema: { $ref: `#/components/schemas/${status}Response${name}` },
             },
           },
         },
+      },
+      schemas: {
+        [`${name}RequestBody`]: {},
+        [`${status}Response${name}`]: {},
       },
       info: {
         isMountingRequest: false,
@@ -145,8 +144,7 @@ export const mapJsonComponents = (
         };
 
         if (schemaType === 'payload_body') {
-          const { schema } =
-            acc.requestBodies[`${name}RequestBody`].content['application/json'];
+          const schema = acc.schemas[`${name}RequestBody`];
 
           // ignore object name
           if (!acc.info.isMountingRequest && rowData.type === 'object') {
@@ -154,14 +152,12 @@ export const mapJsonComponents = (
             acc.info.isMountingRequest = true;
             return;
           }
-          populateSchema(schema);
+
+          populateSchema(schema as JsonObject);
         }
 
         if (schemaType === 'saida') {
-          const { schema } =
-            acc.responses[`${status}Response${name}`].content[
-              'application/json'
-            ];
+          const schema = acc.schemas[`${status}Response${name}`];
 
           // ignore object name
           if (!acc.info.isMountingResponse && rowData.type === 'object') {
@@ -169,7 +165,8 @@ export const mapJsonComponents = (
             acc.info.isMountingResponse = true;
             return;
           }
-          populateSchema(schema);
+
+          populateSchema(schema as JsonObject);
         }
       };
 

@@ -12,6 +12,8 @@
 
 [X] - mover authorization para security
 
-[ ] - separar schemas
+[X] - separar schemas
+
+[X] - sheet de infos/tags
 
 [ ] - testes

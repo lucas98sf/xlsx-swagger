@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { JsonComponents, JsonSheet } from '../types';
+import { JsonComponents, JsonSheet, JsonSheetInfo } from '../types';
 import { upperCaseFirstLetter } from '../utils';
 import {
   defaultResponseErrorSchema,
@@ -8,21 +8,26 @@ import {
 } from './defaultResponses';
 
 export const mapJsonPaths = (
+  info: JsonSheetInfo,
   sheets: Array<JsonSheet & { components: JsonComponents }>
 ): OpenAPIV3.Document => {
   return {
     openapi: '3.0.0',
     info: {
-      title: 'APIsXSwagger',
-      version: '1.0.0',
+      title: info.title,
+      version: info.version,
     },
+    servers: info.servers.map(server => ({ url: server })),
+    tags: info.tags,
     paths: sheets.reduce((paths, sheet) => {
-      const { name, version, api, method, description } = sheet;
+      const { name, version, tag, api, method, description } = sheet;
       const path = api.replace(`${version}/`, '/')!;
       const operationId = `${upperCaseFirstLetter(name)}`;
-      const hasAuth = Object.keys(sheet.components.parameters).some(
-        param => param.toLowerCase() === 'authorization'
+      const hasAuth: boolean = Object.keys(sheet.components.parameters).some(
+        param => param === 'Authorization'
       );
+      // eslint-disable-next-line no-param-reassign
+      delete sheet.components.parameters.Authorization;
 
       return {
         ...paths,
@@ -31,11 +36,10 @@ export const mapJsonPaths = (
           [method.toLowerCase()]: {
             operationId,
             description,
-            parameters: Object.keys(sheet.components.parameters)
-              .filter(key => key.toLowerCase() !== 'authorization')
-              .map(key => ({
-                $ref: `#/components/parameters/${key}`,
-              })),
+            tags: [tag],
+            parameters: Object.keys(sheet.components.parameters).map(key => ({
+              $ref: `#/components/parameters/${key}`,
+            })),
             ...(sheet.components.requestBodies[`${name}RequestBody`]
               ? {
                   requestBody: {
@@ -83,7 +87,11 @@ export const mapJsonPaths = (
           ...(components.responses as Record<string, OpenAPIV3.ResponseObject>),
           ...defaultResponses,
         },
-        schemas: defaultResponseErrorSchema,
+        schemas: {
+          ...acc.schemas,
+          ...(components.schemas as Record<string, OpenAPIV3.SchemaObject>),
+          ...defaultResponseErrorSchema,
+        },
         securitySchemes: {
           authorization: {
             type: 'apiKey',

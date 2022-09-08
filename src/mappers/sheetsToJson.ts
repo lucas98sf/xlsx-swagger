@@ -1,35 +1,71 @@
+// @ts-nocheck
 import * as xlsx from 'xlsx';
 import fs from 'fs';
-import { JsonSheet } from '../types';
-// import { OpenAPIV3 } from 'openapi-types';
-// type JsonSheet = {}
+import { JsonSheet, JsonSheetInfo } from '../types';
 
 export const writeJson = (json: object, outputFile: string) => {
   const logsFolder = `${process.cwd()}/logs/`;
   if (!fs.existsSync(logsFolder)) fs.mkdirSync(logsFolder);
   const prettyJson = JSON.stringify(json, null, 2);
-  // console.log(prettyJson);
   fs.writeFileSync(logsFolder + outputFile, prettyJson);
 };
 
-export const sheetsToJson = (filename: string): JsonSheet[] => {
+export const sheetsToJson = (
+  filename: string
+): [JsonSheetInfo, JsonSheet[]] => {
   try {
     const workbook = xlsx.readFile(filename);
-    // validateSheet({
 
     workbook.Workbook?.Sheets?.forEach(sheetProp => {
       if (sheetProp?.Hidden && sheetProp?.Hidden > 0 && sheetProp.name) {
-        // console.log('deleted hidden sheet:', sheetProp.name);
-        // console.log(workbook.Sheets[sheetProp.name]);
+        console.log('Deleted hidden sheet:', sheetProp.name);
         delete workbook.Sheets[sheetProp.name];
       }
     });
+
+    const sheetInfo = xlsx.utils.sheet_to_json(workbook.Sheets.Info, {
+      blankrows: false,
+      skipHidden: true,
+      header: [
+        'title', // TÍTULO
+        'version', // VERSÃO
+        'description', // DESCRIÇÃO
+        'servers', // SERVIDORES
+        'tags', // TAGS
+        'tagDescription', // DESCRIÇÃO TAGS
+      ],
+      range: {
+        s: {
+          c: 1,
+          r: 2,
+        },
+        e: {
+          c: 6,
+          r: 500,
+        },
+      },
+    });
+    delete workbook.Sheets.Info;
+
+    const info: JsonSheetInfo = {
+      /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+      title: sheetInfo[0].title,
+      version: sheetInfo[0].version,
+      description: sheetInfo[0].description,
+      servers: sheetInfo.flatMap(row => (row.servers as string) || []),
+      tags: sheetInfo.map(row => ({
+        name: row.tags,
+        description: row.tagDescription,
+      })),
+      /* eslint-enable @typescript-eslint/no-unsafe-assignment */
+    } as unknown as JsonSheetInfo;
 
     const paths = xlsx.utils.sheet_to_json(workbook.Sheets.APIsXSwagger, {
       blankrows: false,
       skipHidden: true,
       header: [
         'name', // 'NOME'
+        'tag', // 'TAG'
         'command', // 'COMANDO',
         'version', // 'VERSÃO',
         'api', // 'API',
@@ -44,13 +80,12 @@ export const sheetsToJson = (filename: string): JsonSheet[] => {
           r: 2,
         },
         e: {
-          c: 8,
+          c: 9,
           r: 500,
         },
       },
     });
     delete workbook.Sheets.APIsXSwagger;
-    // console.log(paths);
 
     const data = Object.entries(workbook.Sheets).reduce(
       (json, [sheet, worksheet]) => {
@@ -84,16 +119,14 @@ export const sheetsToJson = (filename: string): JsonSheet[] => {
       },
       {}
     );
-    // console.log(data);
 
-    // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const result = paths.map((path: xlsx.WorkSheet, idx) => ({
+    const result: JsonSheet[] = paths.map((path: xlsx.WorkSheet, idx) => ({
       ...path,
       data: Object.entries(data)[idx][1],
-    })); // paths.map(path => ({ ...path, data: data[path.command] }));
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return result as JsonSheet[];
+    }));
+
+    return [info, result];
   } catch (error: unknown) {
     console.error('Erro no excel:', (error as Error).message.split('\n')[0]);
     throw error;
